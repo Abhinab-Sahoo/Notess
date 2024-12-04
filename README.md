@@ -1,6 +1,6 @@
 # Notess (Inspired by Google Keep)
 
-!https://img.shields.io/badge/license-MIT-blue.svg
+https://img.shields.io/badge/license-MIT-blue.svg
 
 ## Description
 
@@ -36,8 +36,9 @@ git clone https://github.com/Abhinab-Sahoo/Notess
 
 ## Screenshots
 
-
-
+<img src="https://github.com/user-attachments/assets/aaee949a-50f7-4540-b95c-874e6a576d7a" alt="Screenshot 1" width="200">
+<img src="https://github.com/user-attachments/assets/b2064f8d-3cbb-496a-b9cb-11961750a57a" alt="Screenshot 2" width="200">
+<img src="https://github.com/user-attachments/assets/e8b7f11c-16e7-4616-a219-3dec555eb158" alt="Screenshot 3" width="200">
 
 
 ## Contributing
