@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cardBackgroundColor">#000000</color> <!-- Black for dark mode -->
+    <color name="textColorPrimary">#C5C4C4</color> <!-- White text for dark mode -->
+
+    <color name="fabBtnBackgroundColor">#4f378b</color> <!-- Dark blue for Dark mode -->
+    <color name="fabBtnTextAndLogoColor">#ebddff</color> <!-- Light blue for Dark mode -->
+
+    <color name="searchNoteBackgroundColor">#1c1f26</color>
+</resources>

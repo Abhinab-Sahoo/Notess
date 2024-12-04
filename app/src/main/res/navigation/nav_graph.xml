@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/noteFragment">
+
+    <fragment
+        android:id="@+id/noteFragment"
+        android:name="com.example.notess.ui.NoteFragment"
+        android:label="fragment_note"
+        tools:layout="@layout/fragment_note" >
+        <action
+            android:id="@+id/action_noteFragment_to_addNoteFragment"
+            app:destination="@id/addNoteFragment" />
+        <action
+            android:id="@+id/action_noteFragment_to_detailNoteFragment"
+            app:destination="@id/detailNoteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addNoteFragment"
+        android:name="com.example.notess.ui.AddNoteFragment"
+        android:label="fragment_add_note"
+        tools:layout="@layout/fragment_add_note" >
+        <action
+            android:id="@+id/action_addNoteFragment_to_noteFragment"
+            app:destination="@id/noteFragment"
+            app:popUpTo="@id/noteFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailNoteFragment"
+        android:name="com.example.notess.ui.DetailNoteFragment"
+        android:label="fragment_detail_note"
+        tools:layout="@layout/fragment_detail_note" >
+        <action
+            android:id="@+id/action_detailNoteFragment_to_addNoteFragment"
+            app:destination="@id/addNoteFragment" />
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/archiveFragment"
+        android:name="com.example.notess.ui.ArchiveFragment"
+        android:label="fragment_archive"
+        tools:layout="@layout/fragment_archive" />
+    <fragment
+        android:id="@+id/deletedFragment"
+        android:name="com.example.notess.ui.DeletedFragment"
+        android:label="fragment_deleted"
+        tools:layout="@layout/fragment_deleted" />
+</navigation>

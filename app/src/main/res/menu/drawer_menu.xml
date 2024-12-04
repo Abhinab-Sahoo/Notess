@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_notes"
+        android:icon="@drawable/ic_notes_24"
+        android:title="Notes" />
+    <item
+        android:id="@+id/nav_archive"
+        android:icon="@drawable/ic_archive"
+        android:title="Archive" />
+    <item
+        android:id="@+id/nav_deleted"
+        android:icon="@drawable/delete_forever_24"
+        android:title="Deleted" />
+
+</menu>
