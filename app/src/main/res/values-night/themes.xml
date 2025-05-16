@@ -7,7 +7,7 @@
         <item name="colorPrimaryVariant">#3700B3</item>
         <item name="colorOnPrimary">#000000</item>
 
-        <item name="android:colorBackground">#000000</item>
+        <item name="android:colorBackground">#121317</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
 
     </style>

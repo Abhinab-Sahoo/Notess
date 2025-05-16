@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.notess.MainActivity
 import com.example.notess.NoteApplication
 import com.example.notess.R
 import com.example.notess.databinding.FragmentNoteBinding
@@ -67,6 +68,11 @@ class NoteFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentNoteBinding.inflate(layoutInflater, container, false)
+
+        binding.menuButton.setOnClickListener {
+            (activity as MainActivity).openDrawer()
+        }
+
         return binding.root
     }
 
@@ -79,7 +85,7 @@ class NoteFragment : Fragment() {
 
         adapter = NoteAdapter(
             clickListener = { note ->
-                val action = NoteFragmentDirections.actionNoteFragmentToDetailNoteFragment(note.id)
+                val action = NoteFragmentDirections.actionNoteFragmentToEditNoteFragment(note.id)
                 findNavController().navigate(action)
             }
         )
@@ -98,14 +104,17 @@ class NoteFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
-        noteViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
+//        noteViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
+//            adapter.submitList(notes)
+//        }
+        noteViewModel.activeNotes.observe(viewLifecycleOwner) { notes ->
             adapter.submitList(notes)
         }
 
-        binding.menuButton.setOnClickListener {
-            Toast.makeText(requireContext(), "In Progress, Coming Soon!!", Toast.LENGTH_SHORT)
-                .show()
-        }
+//        binding.menuButton.setOnClickListener {
+//            Toast.makeText(requireContext(), "In Progress, Coming Soon!!", Toast.LENGTH_SHORT)
+//                .show()
+//        }
 
     }
 
@@ -121,7 +130,7 @@ class NoteFragment : Fragment() {
                 delay(300)
                 if (text.isNullOrEmpty()) {
                     // Reset to full list when search is cleared
-                    noteViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
+                    noteViewModel.activeNotes.observe(viewLifecycleOwner) { notes ->
                         adapter.submitList(notes)
                     }
                 } else {
@@ -147,7 +156,7 @@ class NoteFragment : Fragment() {
         noteViewModel.searchResults.observe(viewLifecycleOwner) { notes ->
             if (binding.searchEditText.text.isNullOrEmpty()) {
                 // Reset to full list when search is cleared
-                noteViewModel.allNotes.observe(viewLifecycleOwner) { allNotes ->
+                noteViewModel.activeNotes.observe(viewLifecycleOwner) { allNotes ->
                     adapter.submitList(allNotes)
                 }
             } else {
@@ -155,7 +164,6 @@ class NoteFragment : Fragment() {
             }
         }
     }
-
 
     private fun setupFabMenu() {
         binding.floatingActionButton.setOnClickListener {

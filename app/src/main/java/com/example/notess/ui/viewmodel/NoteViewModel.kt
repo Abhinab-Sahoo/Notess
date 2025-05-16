@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.room.util.copy
 import com.example.notess.data.NoteDao
-import com.example.notess.data.NoteDatabase
 import com.example.notess.model.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,6 +20,9 @@ class NoteViewModel(private var noteDao: NoteDao) : ViewModel() {
     val searchResults: LiveData<List<Note>> = _searchQuery.switchMap { query ->
         noteDao.searchNote(if (query.isNullOrBlank()) "" else "%$query%")
     }
+
+    val activeNotes: LiveData<List<Note>> = noteDao.getActiveNotes()
+    val archivedNotes: LiveData<List<Note>> = noteDao.getArchivedNotes()
 
     fun retrieveNote(id: Int) : LiveData<Note> {
         return noteDao.getNote(id)
@@ -43,19 +46,16 @@ class NoteViewModel(private var noteDao: NoteDao) : ViewModel() {
         }
     }
 
-    fun updateNote(
-        id: Int,
-        noteHead: String?,
-        noteBody: String
-    ) {
-        val note = Note(
-            id = id,
-            noteHead = noteHead ?: "",
-            noteBody = noteBody
-        )
-
+    fun updateNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             noteDao.updateNote(note)
+        }
+    }
+
+    fun archiveNote(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val archivedNote = note.copy(isArchived = true)
+            noteDao.updateNote(archivedNote)
         }
     }
 
@@ -65,9 +65,6 @@ class NoteViewModel(private var noteDao: NoteDao) : ViewModel() {
         }
     }
 
-    fun isEntryValid(noteHead: String = " ", noteBody: String) : Boolean {
-        return noteHead.isNotBlank() || noteBody.isNotBlank()
-    }
 }
 
 class NoteViewModelFactory(private val noteDao: NoteDao) : ViewModelProvider.Factory {

@@ -22,6 +22,12 @@ interface NoteDao {
     @Query("SELECT * FROM note_database WHERE (:query IS NULL OR :query = '' OR LOWER(noteHead) LIKE LOWER(:query) OR LOWER(noteBody) LIKE LOWER(:query)) ORDER BY id DESC")
     fun searchNote(query: String?): LiveData<List<Note>>
 
+    @Query("SELECT * FROM note_database WHERE isArchived = 0 ORDER BY id DESC")
+    fun getActiveNotes(): LiveData<List<Note>>
+
+    @Query("SELECT * FROM note_database WHERE isArchived = 1 ORDER BY id DESC")
+    fun getArchivedNotes(): LiveData<List<Note>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(note: Note)
 

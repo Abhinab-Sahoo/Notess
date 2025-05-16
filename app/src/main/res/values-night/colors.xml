@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="cardBackgroundColor">#000000</color> <!-- Black for dark mode -->
-    <color name="textColorPrimary">#C5C4C4</color> <!-- White text for dark mode -->
+    <color name="cardBackgroundColor">#121317</color> <!-- Black for dark mode previous code #000000 -->
+    <color name="textColorPrimary">#e3e2e7</color> <!-- White text for dark mode, previous code #C5C4C4 -->
+    <color name="tv_title_color">#e2e1e6</color> <!-- White text for light mode -->
 
     <color name="fabBtnBackgroundColor">#4f378b</color> <!-- Dark blue for Dark mode -->
     <color name="fabBtnTextAndLogoColor">#ebddff</color> <!-- Light blue for Dark mode -->

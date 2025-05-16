@@ -14,8 +14,9 @@
             android:id="@+id/action_noteFragment_to_addNoteFragment"
             app:destination="@id/addNoteFragment" />
         <action
-            android:id="@+id/action_noteFragment_to_detailNoteFragment"
-            app:destination="@id/detailNoteFragment" />
+            android:id="@+id/action_noteFragment_to_editNoteFragment"
+            app:destination="@id/editNoteFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/addNoteFragment"
@@ -33,23 +34,42 @@
             app:argType="integer" />
     </fragment>
     <fragment
-        android:id="@+id/detailNoteFragment"
-        android:name="com.example.notess.ui.DetailNoteFragment"
+        android:id="@+id/editNoteFragment"
+        android:name="com.example.notess.ui.EditNoteFragment"
         android:label="fragment_detail_note"
-        tools:layout="@layout/fragment_detail_note" >
-        <action
-            android:id="@+id/action_detailNoteFragment_to_addNoteFragment"
-            app:destination="@id/addNoteFragment" />
+        tools:layout="@layout/fragment_edit_note" >
+
         <argument
             android:name="id"
             android:defaultValue="0"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_editNoteFragment_to_noteFragment"
+            app:destination="@id/noteFragment"
+            app:popUpTo="@id/noteFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_editNoteFragment_to_archiveFragment"
+            app:destination="@id/archiveFragment"
+            app:popUpTo="@id/archiveFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/archiveFragment"
         android:name="com.example.notess.ui.ArchiveFragment"
         android:label="fragment_archive"
-        tools:layout="@layout/fragment_archive" />
+        tools:layout="@layout/fragment_archive" >
+
+        <action
+            android:id="@+id/action_archiveFragment_to_editNoteFragment"
+            app:destination="@id/editNoteFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_archiveFragment_to_noteFragment"
+            app:destination="@id/noteFragment"
+            app:popUpTo="@id/noteFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/deletedFragment"
         android:name="com.example.notess.ui.DeletedFragment"

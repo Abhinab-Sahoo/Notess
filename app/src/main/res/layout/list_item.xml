@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:text="@{note.noteHead}"
                 android:textSize="16sp"
-                android:textColor="@color/textColorPrimary"
+                android:textColor="@color/tv_title_color"
                 android:textStyle="bold"
                 android:ellipsize="end"
                 android:maxLines="1"

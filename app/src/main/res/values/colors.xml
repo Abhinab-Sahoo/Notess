@@ -7,8 +7,9 @@
     <color name="colorAccent">#936B9F</color>
     <color name="gray">#808080</color>
 
-    <color name="cardBackgroundColor">#FFFFFF</color> <!-- White for light mode -->
-    <color name="textColorPrimary">#000000</color> <!-- Black text for light mode -->
+    <color name="cardBackgroundColor">#faf9fe</color> <!-- White for light mode -->
+    <color name="textColorPrimary">#5c5b60</color> <!-- Black text for light mode -->
+    <color name="tv_title_color">#1b1a1f</color> <!-- Black text for light mode -->
 
     <color name="fabBtnBackgroundColor">#ebddff</color> <!-- Light blue for light mode -->
     <color name="fabBtnTextAndLogoColor">#21005d</color> <!-- Dark blue for light mode -->

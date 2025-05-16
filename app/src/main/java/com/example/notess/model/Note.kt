@@ -8,5 +8,6 @@ data class Note(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val noteHead: String,
-    val noteBody: String
+    val noteBody: String,
+    val isArchived: Boolean = false
 )
