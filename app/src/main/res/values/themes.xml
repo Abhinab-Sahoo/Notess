@@ -10,6 +10,8 @@
         <!-- Background and Text Colors -->
         <item name="android:colorBackground">#faf9fe</item>
         <item name="android:textColorPrimary">#000000</item>
+
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.Notess" parent="Base.Theme.Notess" />

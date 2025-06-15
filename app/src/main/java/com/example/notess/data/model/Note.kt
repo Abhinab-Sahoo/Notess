@@ -1,4 +1,4 @@
-package com.example.notess.model
+package com.example.notess.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,5 +9,8 @@ data class Note(
     val id: Int = 0,
     val noteHead: String,
     val noteBody: String,
-    val isArchived: Boolean = false
+    val isArchived: Boolean = false,
+    val isDeleted: Boolean = false,
+    val deletedAt: Long? = null,
+    val deletedFrom: String? = null
 )

@@ -6,11 +6,11 @@
     <data>
         <variable
             name="note"
-            type="com.example.notess.model.Note" />
+            type="com.example.notess.data.model.Note" />
 
         <variable
             name="viewModel"
-            type="com.example.notess.ui.viewmodel.NoteViewModel" />
+            type="com.example.notess.viewmodel.NoteViewModel" />
     </data>
 
     <!-- Replaced CardView with MaterialCardView -->

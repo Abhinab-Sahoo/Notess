@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.NoteFragment">
+    tools:context=".ui.fragments.NoteFragment">
 
     <!-- Added Search Bar -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/searchBarCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="10dp"
         app:cardBackgroundColor="@color/searchNoteBackgroundColor"
         app:cardCornerRadius="28dp"
         app:cardElevation="0dp"
@@ -20,7 +20,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="8dp">
 
@@ -50,15 +50,18 @@
 
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@id/layoutToggleButton"
-                app:layout_constraintStart_toEndOf="@id/menuButton" />
+                app:layout_constraintStart_toEndOf="@id/menuButton"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <ImageButton
                 android:id="@+id/layoutToggleButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Toggle layout"
                 android:src="@drawable/linear_layout"
+                android:layout_marginEnd="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

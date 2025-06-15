@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_archive"
-        android:icon="@drawable/ic_archive"
-        android:title="@string/archive"
+        android:id="@+id/action_unarchive"
+        android:icon="@drawable/unarchive"
+        android:title="@string/unarchive"
         app:showAsAction="ifRoom"
         />
 

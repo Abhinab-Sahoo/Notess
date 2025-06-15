@@ -1,4 +1,4 @@
-package com.example.notess.ui
+package com.example.notess.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -19,28 +19,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notess.MainActivity
-import com.example.notess.NoteApplication
 import com.example.notess.R
 import com.example.notess.databinding.FragmentNoteBinding
-import com.example.notess.model.Note
 import com.example.notess.ui.adapter.NoteAdapter
-import com.example.notess.ui.viewmodel.NoteViewModel
-import com.example.notess.ui.viewmodel.NoteViewModelFactory
+import com.example.notess.viewmodel.NoteViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+@AndroidEntryPoint
 class NoteFragment : Fragment() {
 
-    private val noteViewModel: NoteViewModel by activityViewModels {
-        NoteViewModelFactory(
-            (activity?.application as NoteApplication).database.noteDao()
-        )
-    }
-
+    private val noteViewModel: NoteViewModel by viewModels()
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     private var isGridLayout: Boolean = true
@@ -85,7 +78,8 @@ class NoteFragment : Fragment() {
 
         adapter = NoteAdapter(
             clickListener = { note ->
-                val action = NoteFragmentDirections.actionNoteFragmentToEditNoteFragment(note.id)
+                val action =
+                    NoteFragmentDirections.actionNoteFragmentToEditNoteFragment(note.id, "note")
                 findNavController().navigate(action)
             }
         )
@@ -104,17 +98,9 @@ class NoteFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
-//        noteViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
-//            adapter.submitList(notes)
-//        }
         noteViewModel.activeNotes.observe(viewLifecycleOwner) { notes ->
             adapter.submitList(notes)
         }
-
-//        binding.menuButton.setOnClickListener {
-//            Toast.makeText(requireContext(), "In Progress, Coming Soon!!", Toast.LENGTH_SHORT)
-//                .show()
-//        }
 
     }
 
@@ -234,30 +220,15 @@ class NoteFragment : Fragment() {
             when (direction) {
 
                 ItemTouchHelper.RIGHT -> {
-                    val action = NoteFragmentDirections.actionNoteFragmentToAddNoteFragment(note.id)
-                    findNavController().navigate(action)
-                    binding.recyclerView.adapter?.notifyItemChanged(position)
+                    noteViewModel.archiveNote(note)
+                    Toast.makeText(requireContext(), "Note Archived!", Toast.LENGTH_SHORT).show()
                 }
 
                 ItemTouchHelper.LEFT -> {
-                    showDeleteConfirmationDialog(note, position)
-//                    binding.recyclerView.adapter?.notifyItemRemoved(position)
+                    noteViewModel.moveToTrash(note, "note")
+                    Toast.makeText(requireContext(), "Moved to bin", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-
-        private fun showDeleteConfirmationDialog(note: Note, position: Int) {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Delete Note")
-                .setMessage("Are you sure you want to delete this note?")
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                    binding.recyclerView.adapter?.notifyItemChanged(position)
-                }
-                .setPositiveButton("Delete") { _, _ ->
-                    noteViewModel.deleteNote(note)
-                }
-                .show()
         }
 
     } // End of NoteFragment

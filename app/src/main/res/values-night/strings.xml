@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="archive">Archive</string>
+    <string name="save_one">Save</string>
+    <string name="delete_one">Delete</string>
+    <string name="unarchive">Unarchive</string>
+    <string name="restore">Restore</string>
+    <string name="delete_forever">Delete Forever</string>
+</resources>

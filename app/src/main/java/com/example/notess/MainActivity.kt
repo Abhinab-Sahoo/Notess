@@ -1,19 +1,19 @@
 package com.example.notess
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.setPadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.notess.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.nav_host_fragment)) { view, insets ->
             val innerPadding = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or
-                WindowInsetsCompat.Type.displayCutout()
+                        WindowInsetsCompat.Type.displayCutout()
             )
 
             view.setPadding(
@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
                 innerPadding.right,
                 innerPadding.bottom
             )
-
             insets
         }
 
@@ -56,21 +55,22 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.closeDrawers()
                     true
                 }
+
                 R.id.menu_archive -> {
                     navController.navigate(R.id.archiveFragment)
                     drawerLayout.closeDrawers()
                     true
                 }
+
                 R.id.menu_deleted -> {
-                    navController.navigate(R.id.deletedFragment)
+                    navController.navigate(R.id.trashFragment)
                     drawerLayout.closeDrawers()
                     true
                 }
+
                 else -> false
             }
-
         }
-
     }
 
     fun openDrawer() {

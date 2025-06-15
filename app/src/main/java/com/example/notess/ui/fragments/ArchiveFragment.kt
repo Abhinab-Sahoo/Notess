@@ -1,31 +1,26 @@
-package com.example.notess.ui
+package com.example.notess.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notess.MainActivity
-import com.example.notess.NoteApplication
 import com.example.notess.R
 import com.example.notess.databinding.FragmentArchiveBinding
 import com.example.notess.ui.adapter.NoteAdapter
-import com.example.notess.ui.viewmodel.NoteViewModel
-import com.example.notess.ui.viewmodel.NoteViewModelFactory
+import com.example.notess.viewmodel.NoteViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class ArchiveFragment : Fragment() {
 
-    private val noteViewModel: NoteViewModel by activityViewModels {
-        NoteViewModelFactory(
-            (activity?.application as NoteApplication).database.noteDao()
-        )
-    }
-
+    private val noteViewModel: NoteViewModel by viewModels()
     private var _binding: FragmentArchiveBinding? = null
     private val binding get() = _binding!!
     private var isGridLayout: Boolean = true
@@ -48,7 +43,7 @@ class ArchiveFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentArchiveBinding.inflate(layoutInflater, container, false)
 
@@ -64,7 +59,7 @@ class ArchiveFragment : Fragment() {
 
         adapter = NoteAdapter(
             clickListener = { note ->
-                val action = ArchiveFragmentDirections.actionArchiveFragmentToEditNoteFragment(note.id)
+                val action = ArchiveFragmentDirections.actionArchiveFragmentToEditNoteFragment(note.id, "archive")
                 findNavController().navigate(action)
             }
         )

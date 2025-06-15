@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/noteFragment"
-        android:name="com.example.notess.ui.NoteFragment"
+        android:name="com.example.notess.ui.fragments.NoteFragment"
         android:label="fragment_note"
         tools:layout="@layout/fragment_note" >
         <action
@@ -16,11 +16,14 @@
         <action
             android:id="@+id/action_noteFragment_to_editNoteFragment"
             app:destination="@id/editNoteFragment" />
+        <action
+            android:id="@+id/action_noteFragment_to_trashFragment"
+            app:destination="@id/trashFragment" />
 
     </fragment>
     <fragment
         android:id="@+id/addNoteFragment"
-        android:name="com.example.notess.ui.AddNoteFragment"
+        android:name="com.example.notess.ui.fragments.AddNoteFragment"
         android:label="fragment_add_note"
         tools:layout="@layout/fragment_add_note" >
         <action
@@ -35,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
-        android:name="com.example.notess.ui.EditNoteFragment"
+        android:name="com.example.notess.ui.fragments.EditNoteFragment"
         android:label="fragment_detail_note"
         tools:layout="@layout/fragment_edit_note" >
 
@@ -43,6 +46,10 @@
             android:name="id"
             android:defaultValue="0"
             app:argType="integer" />
+        <argument
+            android:name="source"
+            android:defaultValue="notes"
+            app:argType="string" />
         <action
             android:id="@+id/action_editNoteFragment_to_noteFragment"
             app:destination="@id/noteFragment"
@@ -53,10 +60,13 @@
             app:destination="@id/archiveFragment"
             app:popUpTo="@id/archiveFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_editNoteFragment_to_trashFragment"
+            app:destination="@id/trashFragment" />
     </fragment>
     <fragment
         android:id="@+id/archiveFragment"
-        android:name="com.example.notess.ui.ArchiveFragment"
+        android:name="com.example.notess.ui.fragments.ArchiveFragment"
         android:label="fragment_archive"
         tools:layout="@layout/fragment_archive" >
 
@@ -71,8 +81,13 @@
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
-        android:id="@+id/deletedFragment"
-        android:name="com.example.notess.ui.DeletedFragment"
-        android:label="fragment_deleted"
-        tools:layout="@layout/fragment_deleted" />
+        android:id="@+id/trashFragment"
+        android:name="com.example.notess.ui.fragments.TrashFragment"
+        android:label="fragment_trash"
+        tools:layout="@layout/fragment_trash" >
+        <action
+            android:id="@+id/action_trashFragment_to_editNoteFragment"
+            app:destination="@id/editNoteFragment" />
+    </fragment>
+
 </navigation>
