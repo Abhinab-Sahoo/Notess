@@ -1,4 +1,4 @@
-package com.example.notess.ui.fragments
+package com.example.notess.ui.fragments.addnote
 
 import android.content.Context
 import android.os.Bundle

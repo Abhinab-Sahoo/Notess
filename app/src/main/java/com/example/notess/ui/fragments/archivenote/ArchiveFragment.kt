@@ -1,4 +1,4 @@
-package com.example.notess.ui.fragments
+package com.example.notess.ui.fragments.archivenote
 
 import android.os.Bundle
 import android.view.LayoutInflater

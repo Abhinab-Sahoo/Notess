@@ -1,4 +1,4 @@
-package com.example.notess.ui.fragments
+package com.example.notess.ui.fragments.trashnote
 
 import android.os.Bundle
 import android.util.Log

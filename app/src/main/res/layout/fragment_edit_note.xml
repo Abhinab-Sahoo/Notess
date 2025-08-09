@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="?android:attr/windowBackground"
     android:padding="8dp"
-    tools:context=".ui.fragments.EditNoteFragment">
+    tools:context=".ui.fragments.editnote.EditNoteFragment">
 
 
     <com.google.android.material.appbar.MaterialToolbar
