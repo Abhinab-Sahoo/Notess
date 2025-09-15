@@ -42,4 +42,15 @@ interface NoteDao {
 
     @Delete
     suspend fun deleteNote(note: Note)
+
+    // New sync related queries
+
+    @Query("SELECT * FROM note_database WHERE needsSync = 1")
+    suspend fun getNotesNeedingSync(): List<Note>
+
+    @Query("UPDATE note_database SET needsSync = 0, firebaseId = :firebaseId WHERE id = :noteId")
+    suspend fun markAsSynced(noteId: Int, firebaseId: String)
+
+    @Query("SELECT * FROM note_database WHERE isDeleted = 1")
+    suspend fun getAllTrashedNote(): List<Note>
 }

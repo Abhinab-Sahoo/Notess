@@ -155,7 +155,7 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun deleteForever() {
-        viewModel.deleteNote(note)
+        viewModel.deleteNoteForever(note)
         Toast.makeText(requireContext(), "Note deleted forever", Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.action_editNoteFragment_to_trashFragment)
     }

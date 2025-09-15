@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.fragments.profile.ProfileFragment">
+    
+    <TextView
+        android:id="@+id/accountCenterTv"
+        android:text="@string/account_center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/tv_title_color"
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/displayNameCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/accountCenterCardViewBGColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/accountCenterTv" >
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:id="@+id/displayName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Display Name"
+                android:textColor="@color/tv_title_color"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/displayNameEditButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintTop_toTopOf="@id/displayName"
+                app:layout_constraintBottom_toBottomOf="@id/displayName"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/emailCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/accountCenterCardViewBGColor"
+        app:layout_constraintTop_toBottomOf="@id/displayNameCardView"
+        app:layout_constraintStart_toStartOf="@id/displayNameCardView"
+        app:layout_constraintEnd_toEndOf="@id/displayNameCardView">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email: awosomeuser@gmail.com"
+                android:textSize="16sp"
+                android:textColor="@color/tv_title_color"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/uid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UID: 46qLiAIxKKaQvJrb2ImSOQxYn43"
+                android:textSize="16sp"
+                android:textColor="@color/tv_title_color"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/email"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/signInAndOutCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="48dp"
+        android:backgroundTint="@color/accountCenterCardViewBGColor"
+        app:layout_constraintStart_toStartOf="@id/emailCardView"
+        app:layout_constraintEnd_toEndOf="@id/emailCardView"
+        app:layout_constraintTop_toBottomOf="@id/emailCardView" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:id="@+id/signInAndOutTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign In"
+                android:textSize="18sp"
+                android:textColor="@color/tv_title_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/SignInAndOutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/login"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintTop_toTopOf="@id/signInAndOutTextView"
+                app:layout_constraintBottom_toBottomOf="@id/signInAndOutTextView"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/deleteAccountCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/accountCenterCardViewBGColor"
+        app:layout_constraintStart_toStartOf="@id/signInAndOutCardView"
+        app:layout_constraintEnd_toEndOf="@id/signInAndOutCardView"
+        app:layout_constraintTop_toBottomOf="@id/signInAndOutCardView" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:id="@+id/deleteAccountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete Account"
+                android:textSize="18sp"
+                android:textColor="@color/tv_title_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/deleteAccountButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/delete_forever_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintTop_toTopOf="@id/deleteAccountTextView"
+                app:layout_constraintBottom_toBottomOf="@id/deleteAccountTextView"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,5 +12,11 @@ data class Note(
     val isArchived: Boolean = false,
     val isDeleted: Boolean = false,
     val deletedAt: Long? = null,
-    val deletedFrom: String? = null
+    val deletedFrom: String? = null,
+
+    // new sync fields
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long =System.currentTimeMillis(),
+    val needsSync: Boolean = false,
+    val firebaseId: String? = null
 )

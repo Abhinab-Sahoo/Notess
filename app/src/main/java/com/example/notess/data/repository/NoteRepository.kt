@@ -1,11 +1,22 @@
 package com.example.notess.data.repository
 
+import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.notess.data.local.dao.NoteDao
 import com.example.notess.data.model.Note
+import com.example.notess.worker.SyncNotesWorker
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
+class NoteRepository @Inject constructor(
+    private val noteDao: NoteDao,
+    @ApplicationContext private val context: Context
+) {
 
     val activeNotes: LiveData<List<Note>> = noteDao.getActiveNotes()
     val archivedNotes: LiveData<List<Note>> = noteDao.getArchivedNotes()
@@ -18,29 +29,31 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
 
     fun getNote(id: Int): LiveData<Note> = noteDao.getNote(id)
 
-    suspend fun insertNote(note: Note) = noteDao.insertNote(note)
-    suspend fun updateNote(note: Note) = noteDao.updateNote(note)
+//    suspend fun getAllNotes(): LiveData<List<Note>> = noteDao.getNotes()
+
+    suspend fun insertNote(note: Note) {
+        noteDao.insertNote(note)
+        scheduleNoteSync()
+    }
+
+    suspend fun updateNote(note: Note) {
+        val updatedNote = note.copy(
+            needsSync = true
+        )
+        noteDao.updateNote(updatedNote)
+    }
     suspend fun deleteNote(note: Note) = noteDao.deleteNote(note)
-    suspend fun deleteAllTrashedNotes() = noteDao.deleteAllTrashedNotes()
 
     suspend fun archiveNote(note: Note) {
-        val archivedNote = note.copy(isArchived = true)
-        noteDao.updateNote(archivedNote)
+        noteDao.updateNote(note)
     }
 
     suspend fun unArchiveNote(note: Note) {
-        val unarchivedNote = note.copy(isArchived = false)
-        noteDao.updateNote(unarchivedNote)
+        noteDao.updateNote(note)
     }
 
-    suspend fun moveToTrash(note: Note, source: String) {
-        val trashedNote = note.copy(
-            isArchived = false,
-            isDeleted = true,
-            deletedAt = System.currentTimeMillis(),
-            deletedFrom = source
-        )
-        noteDao.updateNote(trashedNote)
+    suspend fun moveToTrash(note: Note) {
+        noteDao.updateNote(note)
     }
 
     suspend fun restoreNote(note: Note) {
@@ -48,8 +61,37 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
             isDeleted = false,
             isArchived = note.deletedFrom == "archive",
             deletedAt = null,
-            deletedFrom = null
+            deletedFrom = null,
+            updatedAt = System.currentTimeMillis(),
+            needsSync = true
         )
         noteDao.updateNote(restoredNote)
     }
+
+    // New firebase sync related functions
+
+    suspend fun getNotesNeedingSync(): List<Note> {
+        return noteDao.getNotesNeedingSync()
+    }
+
+    suspend fun markNoteAsSynced(noteId: Int, firebaseId: String) {
+        return noteDao.markAsSynced(noteId, firebaseId)
+    }
+
+    suspend fun deleteAllTrashedNotes(): List<Note> {
+        return noteDao.getAllTrashedNote()
+    }
+
+    private fun scheduleNoteSync() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<SyncNotesWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(workRequest)
+    }
+
 }

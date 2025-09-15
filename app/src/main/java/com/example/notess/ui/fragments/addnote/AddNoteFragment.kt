@@ -17,7 +17,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.notess.R
-import com.example.notess.data.model.Note
 import com.example.notess.databinding.FragmentAddNoteBinding
 import com.example.notess.viewmodel.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,13 +108,7 @@ class AddNoteFragment : Fragment() {
             return
         }
 
-        val note = Note(
-            noteHead = title,
-            noteBody = body,
-            isArchived = true
-        )
-
-        viewModel.insertNote(note)
+        viewModel.saveAndArchiveNote(noteHead = title, noteBody = body)
         Toast.makeText(requireContext(), "Note Archived!", Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.action_addNoteFragment_to_noteFragment)
     }

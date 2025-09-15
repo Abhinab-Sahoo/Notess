@@ -3,7 +3,9 @@ package com.example.notess.di
 import android.content.Context
 import androidx.room.Room
 import com.example.notess.data.local.dao.NoteDao
+import com.example.notess.data.local.db.MIGRATION_2_3
 import com.example.notess.data.local.db.MIGRATION_3_4
+import com.example.notess.data.local.db.MIGRATION_4_5
 import com.example.notess.data.local.db.NoteDatabase
 import dagger.Module
 import dagger.Provides
@@ -26,7 +28,11 @@ object DatabaseModule {
             NoteDatabase::class.java,
             "note_database"
         )
-            .addMigrations(MIGRATION_3_4)
+            .addMigrations(
+                MIGRATION_2_3,
+                MIGRATION_3_4,
+                MIGRATION_4_5
+            )
             .build()
     }
 

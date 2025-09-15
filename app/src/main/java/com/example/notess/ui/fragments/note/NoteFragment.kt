@@ -18,22 +18,29 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import com.example.notess.MainActivity
 import com.example.notess.R
 import com.example.notess.databinding.FragmentNoteBinding
 import com.example.notess.ui.adapter.NoteAdapter
+import com.example.notess.viewmodel.AuthViewModel
 import com.example.notess.viewmodel.NoteViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class NoteFragment : Fragment() {
 
     private val noteViewModel: NoteViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     private var isGridLayout: Boolean = true
@@ -75,6 +82,7 @@ class NoteFragment : Fragment() {
         setupFabMenu()
         setUpSearch()
         observeSearchResults()
+        goToProfile()
 
         adapter = NoteAdapter(
             clickListener = { note ->
@@ -102,6 +110,30 @@ class NoteFragment : Fragment() {
             adapter.submitList(notes)
         }
 
+        replaceWithGooglePhoto()
+
+    }
+
+    private fun replaceWithGooglePhoto() {
+        authViewModel.isUserLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
+            if (isLoggedIn) {
+                val photoUrl = firebaseAuth.currentUser?.photoUrl
+                Glide.with(requireContext())
+                    .load(photoUrl)
+                    .placeholder(R.drawable.account)
+                    .error(R.drawable.account)
+                    .circleCrop()
+                    .into(binding.accountButton)
+            } else {
+                binding.accountButton.setImageResource(R.drawable.account)
+            }
+        }
+    }
+
+    private fun goToProfile() {
+        binding.accountButton.setOnClickListener {
+            findNavController().navigate(R.id.profileFragment)
+        }
     }
 
 

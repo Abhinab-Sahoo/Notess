@@ -15,4 +15,6 @@
     <color name="fabBtnTextAndLogoColor">#21005d</color> <!-- Dark blue for light mode -->
 
     <color name="searchNoteBackgroundColor">#ededf5</color>
+
+    <color name="accountCenterCardViewBGColor">#ebddff</color>
 </resources>

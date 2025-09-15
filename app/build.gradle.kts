@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.firebase.firestore)
+    implementation(libs.androidx.hilt.common)
 //    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -86,4 +88,9 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.56.2")
 
     androidTestImplementation ("androidx.arch.core:core-testing:2.2.0")
+    // Glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.10.3")
 }

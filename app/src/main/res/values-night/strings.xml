@@ -6,4 +6,5 @@
     <string name="unarchive">Unarchive</string>
     <string name="restore">Restore</string>
     <string name="delete_forever">Delete Forever</string>
+    <string name="profile_icon">profile icon</string>
 </resources>

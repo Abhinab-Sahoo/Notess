@@ -1,6 +1,7 @@
 package com.example.notess
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -11,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.notess.databinding.ActivityMainBinding
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -70,6 +72,16 @@ class MainActivity : AppCompatActivity() {
 
                 else -> false
             }
+        }
+    }
+
+    private fun signOut() {
+        val auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null) {
+            auth.signOut()
+            Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "No user signed in", Toast.LENGTH_SHORT).show()
         }
     }
 

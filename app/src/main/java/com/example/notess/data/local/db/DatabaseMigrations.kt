@@ -17,3 +17,20 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
         db.execSQL("ALTER TABLE note_database ADD COLUMN deletedFrom TEXT")
     }
 }
+
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+
+        // Add createdAt column - default to current time
+        db.execSQL("ALTER TABLE note_database ADD COLUMN createdAt INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+
+        // Add updatedAt column - default to current time
+        db.execSQL("ALTER TABLE note_database ADD COLUMN updatedAt INTEGER NOT NULL DEFAULT ${System.currentTimeMillis()}")
+
+        // Add needsSync column - default to 1 (true) so existing notes will be synced
+        db.execSQL("ALTER TABLE note_database ADD COLUMN needsSync INTEGER NOT NULL DEFAULT 1")
+
+        // Add firebaseId column - default to null (no Firebase ID yet)
+        db.execSQL("ALTER TABLE note_database ADD COLUMN firebaseId TEXT")
+    }
+}

@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.notess.data.model.Note
+import com.example.notess.data.remote.SyncManager
 import com.example.notess.data.repository.NoteRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoteViewModel @Inject constructor(
-    private var repository: NoteRepository
+    private var repository: NoteRepository,
+    private val syncManager: SyncManager,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _searchQuery = MutableLiveData<String?>()
@@ -42,29 +46,70 @@ class NoteViewModel @Inject constructor(
     ) {
         val note = Note(
             noteHead = noteHead ?: "",
-            noteBody = noteBody
+            noteBody = noteBody,
+            needsSync = true,
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis()
         )
 
         viewModelScope.launch(Dispatchers.IO) {
+
             repository.insertNote(note)
+//            syncManager.syncSingleNoteIfLoggedIn(note)
         }
     }
 
     fun updateNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateNote(note)
+            val updatedNote = note.copy(
+                updatedAt = System.currentTimeMillis(),
+                needsSync = true
+            )
+            repository.updateNote(updatedNote)
+
+            syncManager.syncSingleNoteIfLoggedIn(updatedNote)
+        }
+    }
+
+    fun saveAndArchiveNote(noteHead: String, noteBody: String) {
+        val currentTime = System.currentTimeMillis()
+        val note = Note(
+            noteHead = noteHead,
+            noteBody = noteBody,
+            isArchived = true,
+            needsSync = true,
+            createdAt = currentTime,
+            updatedAt = currentTime
+        )
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insertNote(note)
+            syncManager.syncSingleNoteIfLoggedIn(note)
         }
     }
 
     fun archiveNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.archiveNote(note)
+            val currentTime = System.currentTimeMillis()
+            val archivedNote = note.copy(
+                isArchived = true,
+                updatedAt = currentTime,
+                needsSync = true
+            )
+            repository.archiveNote(archivedNote)
+            syncManager.syncSingleNoteIfLoggedIn(archivedNote)
         }
     }
 
     fun unArchiveNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.unArchiveNote(note)
+            val currentTime = System.currentTimeMillis()
+            val unarchivedNote = note.copy(
+                isArchived = false,
+                updatedAt = currentTime,
+                needsSync = true
+            )
+            repository.unArchiveNote(unarchivedNote)
+            syncManager.syncSingleNoteIfLoggedIn(unarchivedNote)
         }
     }
 
@@ -76,18 +121,32 @@ class NoteViewModel @Inject constructor(
 
     fun moveToTrash(note: Note, source: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.moveToTrash(note, source)
+            val currentTime = System.currentTimeMillis()
+            val trashedNote = note.copy(
+                isDeleted = true,
+                isArchived = false,
+                deletedAt = currentTime,
+                deletedFrom = source,
+                updatedAt = currentTime,
+                needsSync = true
+            )
+            repository.moveToTrash(trashedNote)
+            syncManager.syncSingleNoteIfLoggedIn(trashedNote)
         }
     }
 
     fun deleteAllTrashedNotes() {
         viewModelScope.launch(Dispatchers.IO) {
+            val trashedNotes = repository.deleteAllTrashedNotes()
+            syncManager.deleteAllTrashedNotesFromFirestore(trashedNotes)
             repository.deleteAllTrashedNotes()
         }
     }
 
-    fun deleteNote(note: Note) {
+    fun deleteNoteForever(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
+            val trashedNotes = repository.deleteAllTrashedNotes()
+            syncManager.deleteAllTrashedNotesFromFirestore(trashedNotes)
             repository.deleteNote(note)
         }
     }
@@ -95,6 +154,7 @@ class NoteViewModel @Inject constructor(
     fun restoreNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.restoreNote(note)
+            syncManager.syncSingleNoteIfLoggedIn(note)
         }
     }
 
