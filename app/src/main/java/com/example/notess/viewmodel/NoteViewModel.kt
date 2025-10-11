@@ -6,11 +6,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.notess.data.model.Note
+import com.example.notess.data.model.SyncAction
 import com.example.notess.data.remote.SyncManager
 import com.example.notess.data.repository.NoteRepository
+import com.example.notess.use_cases.AddNoteResult
+import com.example.notess.use_cases.AddNoteUseCase
+import com.example.notess.use_cases.SaveAndArchiveNoteUseCase
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +25,9 @@ import javax.inject.Inject
 class NoteViewModel @Inject constructor(
     private var repository: NoteRepository,
     private val syncManager: SyncManager,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val addNoteUseCase: AddNoteUseCase,
+    private val saveAndArchiveNoteUseCase: SaveAndArchiveNoteUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableLiveData<String?>()
@@ -40,22 +48,32 @@ class NoteViewModel @Inject constructor(
         _searchQuery.value = query
     }
 
-    fun addNote(
-        noteHead: String?,
-        noteBody: String
+    sealed class UiEvent {
+        object NavigateBack : UiEvent()
+        object ShowEmptyNoteError : UiEvent()
+        object ShowArchiveConfirmationAndNavigateBack : UiEvent()
+    }
+
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    fun addNote(noteHead: String?, noteBody: String) {
+        viewModelScope.launch {
+            when (addNoteUseCase(noteHead, noteBody)) {
+                AddNoteResult.SUCCESS -> _uiEvent.send(UiEvent.NavigateBack)
+                AddNoteResult.EMPTY_NOTE -> _uiEvent.send(UiEvent.ShowEmptyNoteError)
+            }
+        }
+    }
+
+    fun onSaveAndArchiveClicked(
+        noteHead: String?, noteBody: String
     ) {
-        val note = Note(
-            noteHead = noteHead ?: "",
-            noteBody = noteBody,
-            needsSync = true,
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis()
-        )
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            repository.insertNote(note)
-//            syncManager.syncSingleNoteIfLoggedIn(note)
+        viewModelScope.launch {
+            when (saveAndArchiveNoteUseCase(noteHead, noteBody)) {
+                AddNoteResult.SUCCESS -> _uiEvent.send(UiEvent.ShowArchiveConfirmationAndNavigateBack)
+                AddNoteResult.EMPTY_NOTE -> _uiEvent.send(UiEvent.ShowEmptyNoteError)
+            }
         }
     }
 
