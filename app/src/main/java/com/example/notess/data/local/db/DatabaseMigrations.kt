@@ -34,3 +34,9 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("ALTER TABLE note_database ADD COLUMN firebaseId TEXT")
     }
 }
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE note_database ADD COLUMN syncAction TEXT NOT NULL DEFAULT 'NONE'")
+    }
+}

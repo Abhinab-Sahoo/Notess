@@ -15,11 +15,14 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.notess.R
 import com.example.notess.databinding.FragmentAddNoteBinding
 import com.example.notess.viewmodel.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -83,34 +86,46 @@ class AddNoteFragment : Fragment() {
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.noteBody, InputMethodManager.SHOW_IMPLICIT)
 
+        observeUiEvents()
+    }
+
+    private fun observeUiEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvent.collect { event ->
+                    when (event) {
+                        is NoteViewModel.UiEvent.NavigateBack -> {
+                            findNavController().popBackStack()
+                        }
+                        is NoteViewModel.UiEvent.ShowEmptyNoteError -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "Note cannot be empty!",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        is NoteViewModel.UiEvent.ShowArchiveConfirmationAndNavigateBack -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "Note archived!",
+                                Toast.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun addNote() {
         val noteHead = binding.noteTitle.text.toString()
         val noteBody = binding.noteBody.text.toString()
-
-        if (noteHead.isNotBlank() || noteBody.isNotBlank()) {
-            viewModel.addNote(noteHead, noteBody)
-            findNavController().navigate(
-                R.id.action_addNoteFragment_to_noteFragment
-            )
-        } else {
-            Toast.makeText(requireContext(), "Note cannot be empty!", Toast.LENGTH_SHORT).show()
-        }
+        viewModel.addNote(noteHead, noteBody)
     }
 
     fun saveAndArchiveNote() {
         val title = binding.noteTitle.text.toString()
         val body = binding.noteBody.text.toString()
-
-        if (title.isBlank() && body.isBlank()) {
-            Toast.makeText(requireContext(), "Note cannot be empty!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        viewModel.saveAndArchiveNote(noteHead = title, noteBody = body)
-        Toast.makeText(requireContext(), "Note Archived!", Toast.LENGTH_SHORT).show()
-        findNavController().navigate(R.id.action_addNoteFragment_to_noteFragment)
+        viewModel.onSaveAndArchiveClicked(title, body)
     }
 
     override fun onDestroyView() {
