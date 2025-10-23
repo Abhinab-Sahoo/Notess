@@ -1,4 +1,4 @@
-package com.example.notess.ui.fragments.archivenote
+package com.example.notess.ui.note_archive
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,9 +13,8 @@ import com.example.notess.MainActivity
 import com.example.notess.R
 import com.example.notess.databinding.FragmentArchiveBinding
 import com.example.notess.ui.adapter.NoteAdapter
-import com.example.notess.viewmodel.NoteViewModel
+import com.example.notess.ui.note_list.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class ArchiveFragment : Fragment() {
@@ -59,7 +58,9 @@ class ArchiveFragment : Fragment() {
 
         adapter = NoteAdapter(
             clickListener = { note ->
-                val action = ArchiveFragmentDirections.actionArchiveFragmentToEditNoteFragment(note.id, "archive")
+                val action = ArchiveFragmentDirections.actionArchiveFragmentToEditNoteFragment(
+                    note.id
+                )
                 findNavController().navigate(action)
             }
         )

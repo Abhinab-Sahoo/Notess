@@ -10,7 +10,7 @@ import com.example.notess.data.local.dao.NoteDao
 import com.example.notess.data.model.Note
 import com.example.notess.worker.SyncNotesWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class NoteRepository @Inject constructor(
@@ -27,9 +27,7 @@ class NoteRepository @Inject constructor(
         return noteDao.searchNote(formattedQuery)
     }
 
-    fun getNote(id: Int): LiveData<Note> = noteDao.getNote(id)
-
-//    suspend fun getAllNotes(): LiveData<List<Note>> = noteDao.getNotes()
+    fun getNote(id: Int): Flow<Note?> = noteDao.getNoteById(id)
 
     suspend fun insertNote(note: Note) {
         noteDao.insertNote(note)
@@ -37,36 +35,9 @@ class NoteRepository @Inject constructor(
     }
 
     suspend fun updateNote(note: Note) {
-        val updatedNote = note.copy(
-            needsSync = true
-        )
-        noteDao.updateNote(updatedNote)
+        noteDao.updateNote(note)
     }
     suspend fun deleteNote(note: Note) = noteDao.deleteNote(note)
-
-    suspend fun archiveNote(note: Note) {
-        noteDao.updateNote(note)
-    }
-
-    suspend fun unArchiveNote(note: Note) {
-        noteDao.updateNote(note)
-    }
-
-    suspend fun moveToTrash(note: Note) {
-        noteDao.updateNote(note)
-    }
-
-    suspend fun restoreNote(note: Note) {
-        val restoredNote = note.copy(
-            isDeleted = false,
-            isArchived = note.deletedFrom == "archive",
-            deletedAt = null,
-            deletedFrom = null,
-            updatedAt = System.currentTimeMillis(),
-            needsSync = true
-        )
-        noteDao.updateNote(restoredNote)
-    }
 
     // New firebase sync related functions
 
@@ -78,8 +49,11 @@ class NoteRepository @Inject constructor(
         return noteDao.markAsSynced(noteId, firebaseId)
     }
 
-    suspend fun deleteAllTrashedNotes(): List<Note> {
+    suspend fun getTrashedNotesForDeletion() : List<Note> {
         return noteDao.getAllTrashedNote()
+    }
+    suspend fun deleteAllTrashedNotes(notes: List<Note>) {
+        noteDao.deleteAllTrashedNotes(notes)
     }
 
     private fun scheduleNoteSync() {

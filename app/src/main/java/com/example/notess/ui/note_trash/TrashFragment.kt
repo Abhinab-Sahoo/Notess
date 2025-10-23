@@ -1,7 +1,6 @@
-package com.example.notess.ui.fragments.trashnote
+package com.example.notess.ui.note_trash
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,16 +13,18 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notess.MainActivity
 import com.example.notess.R
 import com.example.notess.databinding.FragmentTrashBinding
 import com.example.notess.ui.adapter.NoteAdapter
-import com.example.notess.viewmodel.NoteViewModel
+import com.example.notess.ui.note_list.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TrashFragment : Fragment() {
@@ -46,7 +47,7 @@ class TrashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val toolbar = binding.trashToolbar
-        (toolbar as? androidx.appcompat.widget.Toolbar)?.let {
+        toolbar.let {
             (requireActivity() as AppCompatActivity).setSupportActionBar(it)
             (requireActivity() as AppCompatActivity).supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
@@ -60,21 +61,17 @@ class TrashFragment : Fragment() {
         requireActivity().addMenuProvider(object : MenuProvider {
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                Log.d("TrashMenu", "onCreateMenu called")
                 menu.clear()
                 menuInflater.inflate(R.menu.trash_menu, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
 
-                Log.d("TrashMenu", "onMenuItemSelected called")
-
                 return when (menuItem.itemId) {
                     R.id.action_empty_trash -> {
                         showDeleteConfirmationDialog()
                         true
                     }
-
                     else -> false
                 }
             }
@@ -84,7 +81,7 @@ class TrashFragment : Fragment() {
         adapter = NoteAdapter(
             clickListener = { note ->
                 val action =
-                    TrashFragmentDirections.actionTrashFragmentToEditNoteFragment(note.id, "trash")
+                    TrashFragmentDirections.actionTrashFragmentToEditNoteFragment(note.id)
                 findNavController().navigate(action)
             }
         )
@@ -94,11 +91,26 @@ class TrashFragment : Fragment() {
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
         noteViewModel.trashedNotes.observe(viewLifecycleOwner) { notes ->
-            Log.d("Trash Fragment", "Trashed notes: ${notes.size}")
-            adapter.submitList(null)
             adapter.submitList(notes)
         }
 
+        collectUiEvents()
+
+    }
+
+    private fun collectUiEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                noteViewModel.uiEvent.collect { event ->
+                    when (event) {
+                        is NoteViewModel.UiEvent.ShowToast -> {
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
     }
 
     private fun showDeleteConfirmationDialog() {
@@ -109,8 +121,7 @@ class TrashFragment : Fragment() {
                 dialog.dismiss()
             }
             .setPositiveButton("Delete") { _, _ ->
-                noteViewModel.deleteAllTrashedNotes()
-                Toast.makeText(requireContext(), "Trash Emptied!", Toast.LENGTH_SHORT).show()
+                noteViewModel.onDeleteAllTrashedNotesClicked()
             }
             .show()
     }

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.trashnote.TrashFragment">
+    tools:context=".ui.note_trash.TrashFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/trashToolbar"

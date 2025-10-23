@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="?android:attr/windowBackground"
     android:padding="8dp"
-    tools:context=".ui.fragments.editnote.EditNoteFragment">
+    tools:context=".ui.note_edit.EditNoteFragment">
 
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/edit_note_menu"
+        app:menu="@menu/edit_note_master_menu"
         app:navigationIcon="@drawable/arrow_back"
         app:title="Edit Note"
         app:titleTextColor="?android:attr/textColorPrimary" />

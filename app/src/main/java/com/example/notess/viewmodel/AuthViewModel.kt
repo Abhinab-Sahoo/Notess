@@ -8,6 +8,8 @@ import com.example.notess.data.remote.SyncManager
 import com.example.notess.data.repository.NoteRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,12 +33,17 @@ class AuthViewModel @Inject constructor(
     private var _isSyncing = MutableLiveData<Boolean>()
     val isSyncing: LiveData<Boolean> = _isSyncing
 
+    private val _userProfilePhotoUrl = MutableStateFlow<String?>(null)
+    val userProfilePhotoUrl: StateFlow<String?> = _userProfilePhotoUrl
+
     private val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
         _isUserLoggedIn.value = firebaseAuth.currentUser != null
+        _userProfilePhotoUrl.value = firebaseAuth.currentUser?.photoUrl?.toString()
     }
 
     init {
         _isUserLoggedIn.value = auth.currentUser != null
+        _userProfilePhotoUrl.value = auth.currentUser?.photoUrl?.toString()
         auth.addAuthStateListener(authStateListener)
         checkAuthState()
     }

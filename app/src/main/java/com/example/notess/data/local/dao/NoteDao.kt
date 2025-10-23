@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.notess.data.model.Note
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -17,7 +18,7 @@ interface NoteDao {
     fun getNotes() : LiveData<List<Note>>
 
     @Query("SELECT * FROM note_database WHERE id = :id")
-    fun getNote(id: Int) : LiveData<Note>
+    fun getNoteById(id: Int) : Flow<Note?>
 
     @Query("SELECT * FROM note_database WHERE (:query IS NULL OR :query = '' OR LOWER(noteHead) LIKE LOWER(:query) OR LOWER(noteBody) LIKE LOWER(:query)) ORDER BY id DESC")
     fun searchNote(query: String?): LiveData<List<Note>>
@@ -31,9 +32,6 @@ interface NoteDao {
     @Query("SELECT * FROM note_database WHERE isDeleted = 1 ORDER BY id DESC")
     fun getTrashedNotes(): LiveData<List<Note>>
 
-    @Query("DELETE FROM note_database WHERE isDeleted = 1")
-    suspend fun deleteAllTrashedNotes()
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNote(note: Note)
 
@@ -42,6 +40,9 @@ interface NoteDao {
 
     @Delete
     suspend fun deleteNote(note: Note)
+
+    @Delete
+    suspend fun deleteAllTrashedNotes(notes: List<Note>)
 
     // New sync related queries
 

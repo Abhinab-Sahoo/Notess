@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/noteFragment"
-        android:name="com.example.notess.ui.fragments.note.NoteFragment"
+        android:name="com.example.notess.ui.note_list.NoteFragment"
         android:label="fragment_note"
         tools:layout="@layout/fragment_note" >
         <action
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/addNoteFragment"
-        android:name="com.example.notess.ui.fragments.addnote.AddNoteFragment"
+        android:name="com.example.notess.ui.note_add.AddNoteFragment"
         android:label="fragment_add_note"
         tools:layout="@layout/fragment_add_note" >
         <action
@@ -41,7 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
-        android:name="com.example.notess.ui.fragments.editnote.EditNoteFragment"
+        android:name="com.example.notess.ui.note_edit.EditNoteFragment"
         android:label="fragment_detail_note"
         tools:layout="@layout/fragment_edit_note" >
 
@@ -49,10 +49,6 @@
             android:name="id"
             android:defaultValue="0"
             app:argType="integer" />
-        <argument
-            android:name="source"
-            android:defaultValue="notes"
-            app:argType="string" />
         <action
             android:id="@+id/action_editNoteFragment_to_noteFragment"
             app:destination="@id/noteFragment"
@@ -69,7 +65,7 @@
     </fragment>
     <fragment
         android:id="@+id/archiveFragment"
-        android:name="com.example.notess.ui.fragments.archivenote.ArchiveFragment"
+        android:name="com.example.notess.ui.note_archive.ArchiveFragment"
         android:label="fragment_archive"
         tools:layout="@layout/fragment_archive" >
 
@@ -85,7 +81,7 @@
     </fragment>
     <fragment
         android:id="@+id/trashFragment"
-        android:name="com.example.notess.ui.fragments.trashnote.TrashFragment"
+        android:name="com.example.notess.ui.note_trash.TrashFragment"
         android:label="fragment_trash"
         tools:layout="@layout/fragment_trash" >
         <action
@@ -94,7 +90,7 @@
     </fragment>
     <fragment
         android:id="@+id/logInFragment"
-        android:name="com.example.notess.ui.fragments.login.LogInFragment"
+        android:name="com.example.notess.ui.note_login.LogInFragment"
         android:label="fragment_log_in"
         tools:layout="@layout/fragment_log_in" >
         <action
@@ -105,7 +101,7 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.notess.ui.fragments.profile.ProfileFragment"
+        android:name="com.example.notess.ui.note_profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" >
         <action

@@ -1,4 +1,4 @@
-package com.example.notess.ui.fragments.note
+package com.example.notess.ui.note_list
 
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +12,9 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,42 +26,18 @@ import com.example.notess.R
 import com.example.notess.databinding.FragmentNoteBinding
 import com.example.notess.ui.adapter.NoteAdapter
 import com.example.notess.viewmodel.AuthViewModel
-import com.example.notess.viewmodel.NoteViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class NoteFragment : Fragment() {
 
     private val noteViewModel: NoteViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
-    @Inject
-    lateinit var firebaseAuth: FirebaseAuth
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
-    private var isGridLayout: Boolean = true
-    private var isFabMenuOpen: Boolean = false
     private lateinit var adapter: NoteAdapter
-
-    private fun updateLayout() {
-        binding.recyclerView.layoutManager = if (isGridLayout) {
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        } else {
-            LinearLayoutManager(requireContext())
-        }
-
-        binding.layoutToggleButton.setImageResource(
-            if (isGridLayout) R.drawable.linear_layout else R.drawable.ic_grid_view
-        )
-
-        binding.recyclerView.adapter?.notifyDataSetChanged()
-    }
 
 
     override fun onCreateView(
@@ -79,53 +57,94 @@ class NoteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupFabMenu()
-        setUpSearch()
-        observeSearchResults()
-        goToProfile()
-
         adapter = NoteAdapter(
             clickListener = { note ->
                 val action =
-                    NoteFragmentDirections.actionNoteFragmentToEditNoteFragment(note.id, "note")
+                    NoteFragmentDirections.actionNoteFragmentToEditNoteFragment(note.id)
                 findNavController().navigate(action)
             }
         )
 
         binding.apply {
-            updateLayout()
             recyclerView.setHasFixedSize(true)
             recyclerView.adapter = adapter
 
             layoutToggleButton.setOnClickListener {
-                isGridLayout = !isGridLayout
-                updateLayout()
+                noteViewModel.onLayoutToggleClicked()
             }
+        }
+
+        noteViewModel.notes.observe(viewLifecycleOwner) { notes ->
+            adapter.submitList(notes)
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
-        noteViewModel.activeNotes.observe(viewLifecycleOwner) { notes ->
-            adapter.submitList(notes)
-        }
-
+        setupFabMenu()
+        setUpSearch()
+        goToProfile()
         replaceWithGooglePhoto()
+        collectUiEvents()
+        collectScreenState()
 
     }
 
+    private fun collectUiEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            noteViewModel.uiEvent.collect { event ->
+                when (event) {
+                    is NoteViewModel.UiEvent.ShowToast -> {
+                        Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {  }
+                }
+            }
+        }
+    }
+
+    private fun collectScreenState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                noteViewModel.screenState.collect { screenState ->
+                    val targetAlpha = if (screenState.isFabMenuOpen) 1f else 0f
+                    binding.fabMenuContainer.animate()
+                        .alpha(targetAlpha)
+                        .setDuration(300)
+                        .withEndAction {
+                            binding.fabMenuContainer.visibility =
+                                if (screenState.isFabMenuOpen) View.VISIBLE else View.GONE
+                        }
+                    val iconRes = if (screenState.isFabMenuOpen) {
+                        R.drawable.close
+                    } else {
+                        R.drawable.ic_input_add
+                    }
+                    binding.floatingActionButton.setImageResource(iconRes)
+
+                    binding.recyclerView.layoutManager = if (screenState.isGridLayout) {
+                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    } else {
+                        LinearLayoutManager(requireContext())
+                    }
+                    binding.layoutToggleButton.setImageResource(
+                        if (screenState.isGridLayout) R.drawable.linear_layout else R.drawable.ic_grid_view
+                    )
+                }
+            }
+        }
+    }
+
     private fun replaceWithGooglePhoto() {
-        authViewModel.isUserLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
-            if (isLoggedIn) {
-                val photoUrl = firebaseAuth.currentUser?.photoUrl
-                Glide.with(requireContext())
-                    .load(photoUrl)
-                    .placeholder(R.drawable.account)
-                    .error(R.drawable.account)
-                    .circleCrop()
-                    .into(binding.accountButton)
-            } else {
-                binding.accountButton.setImageResource(R.drawable.account)
+        viewLifecycleOwner.lifecycleScope.launch {
+            authViewModel.userProfilePhotoUrl.collect { photoUrl ->
+                if (photoUrl != null) {
+                    Glide.with(requireContext())
+                        .load(photoUrl)
+                        .placeholder(R.drawable.account)
+                        .error(R.drawable.account)
+                        .circleCrop()
+                }
             }
         }
     }
@@ -135,28 +154,11 @@ class NoteFragment : Fragment() {
             findNavController().navigate(R.id.profileFragment)
         }
     }
-
-
     private fun setUpSearch() {
 
-        val scope = viewLifecycleOwner.lifecycleScope
-        var searchJob: Job? = null
-
         binding.searchEditText.doAfterTextChanged { text ->
-            searchJob?.cancel()
-            searchJob = scope.launch {
-                delay(300)
-                if (text.isNullOrEmpty()) {
-                    // Reset to full list when search is cleared
-                    noteViewModel.activeNotes.observe(viewLifecycleOwner) { notes ->
-                        adapter.submitList(notes)
-                    }
-                } else {
-                    noteViewModel.updateSearchQuery(text.toString())
-                }
-            }
+            noteViewModel.onSearchQueryChanged(text.toString())
         }
-
 
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -170,22 +172,9 @@ class NoteFragment : Fragment() {
         }
     }
 
-    private fun observeSearchResults() {
-        noteViewModel.searchResults.observe(viewLifecycleOwner) { notes ->
-            if (binding.searchEditText.text.isNullOrEmpty()) {
-                // Reset to full list when search is cleared
-                noteViewModel.activeNotes.observe(viewLifecycleOwner) { allNotes ->
-                    adapter.submitList(allNotes)
-                }
-            } else {
-                adapter.submitList(notes)
-            }
-        }
-    }
-
     private fun setupFabMenu() {
         binding.floatingActionButton.setOnClickListener {
-            toggleFabMenu()
+            noteViewModel.onFabClicked()
         }
 
         binding.fabImage.setOnClickListener {
@@ -223,43 +212,21 @@ class NoteFragment : Fragment() {
         dialog.show()
     }
 
-    private fun toggleFabMenu() {
-        isFabMenuOpen = !isFabMenuOpen
-        binding.fabMenuContainer.animate()
-            .alpha(if (isFabMenuOpen) 1f else 0f)
-            .setDuration(300)
-            .withEndAction {
-                binding.fabMenuContainer.visibility =
-                    if (isFabMenuOpen) View.VISIBLE else View.GONE
-            }
-    }
-
     private val swipeHandler = object :
         ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
         override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
+            recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
-        ): Boolean {
-            return false
-        }
+        ): Boolean { return false }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
             val note = (binding.recyclerView.adapter as NoteAdapter).currentList[position]
 
             when (direction) {
-
-                ItemTouchHelper.RIGHT -> {
-                    noteViewModel.archiveNote(note)
-                    Toast.makeText(requireContext(), "Note Archived!", Toast.LENGTH_SHORT).show()
-                }
-
-                ItemTouchHelper.LEFT -> {
-                    noteViewModel.moveToTrash(note, "note")
-                    Toast.makeText(requireContext(), "Moved to bin", Toast.LENGTH_SHORT).show()
-                }
+                ItemTouchHelper.RIGHT -> noteViewModel.onNoteSwipedRight(note)
+                ItemTouchHelper.LEFT -> noteViewModel.onNoteSwipedLeft(note)
             }
         }
 

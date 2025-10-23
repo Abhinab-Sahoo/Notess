@@ -1,4 +1,4 @@
-package com.example.notess.ui.fragments.addnote
+package com.example.notess.ui.note_add
 
 import android.content.Context
 import android.os.Bundle
@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,10 +21,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.notess.R
 import com.example.notess.databinding.FragmentAddNoteBinding
-import com.example.notess.viewmodel.NoteViewModel
+import com.example.notess.ui.note_list.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
 
 @AndroidEntryPoint
 class AddNoteFragment : Fragment() {
@@ -49,7 +49,7 @@ class AddNoteFragment : Fragment() {
 
 
         val toolbar = binding.addNoteToolbar
-        (toolbar as? androidx.appcompat.widget.Toolbar)?.let {
+        (toolbar as? Toolbar)?.let {
             (requireActivity() as AppCompatActivity).setSupportActionBar(it)
             (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -110,6 +110,7 @@ class AddNoteFragment : Fragment() {
                                 Toast.LENGTH_SHORT).show()
                             findNavController().popBackStack()
                         }
+                        else -> {}
                     }
                 }
             }
