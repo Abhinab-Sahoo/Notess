@@ -112,7 +112,7 @@ class NoteFragment : Fragment() {
                         .alpha(targetAlpha)
                         .setDuration(300)
                         .withEndAction {
-                            binding.fabMenuContainer.visibility =
+                            _binding?.fabMenuContainer?.visibility =
                                 if (screenState.isFabMenuOpen) View.VISIBLE else View.GONE
                         }
                     val iconRes = if (screenState.isFabMenuOpen) {
@@ -178,15 +178,18 @@ class NoteFragment : Fragment() {
         }
 
         binding.fabImage.setOnClickListener {
+            noteViewModel.closeFabMenu()
             showImageDialog()
         }
 
         binding.fabList.setOnClickListener {
+            noteViewModel.closeFabMenu()
             Toast.makeText(requireContext(), "In Progress, Coming Soon!!", Toast.LENGTH_SHORT)
                 .show()
         }
 
         binding.fabText.setOnClickListener {
+            noteViewModel.closeFabMenu()
             findNavController().navigate(R.id.action_noteFragment_to_addNoteFragment)
         }
     }

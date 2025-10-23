@@ -125,6 +125,11 @@ class NoteViewModel @Inject constructor(
             currentState.copy(isFabMenuOpen = !currentState.isFabMenuOpen)
         }
     }
+    fun closeFabMenu() {
+        _screenState.update {
+            it.copy(isFabMenuOpen = false)
+        }
+    }
 
     fun onLayoutToggleClicked() {
         viewModelScope.launch {
