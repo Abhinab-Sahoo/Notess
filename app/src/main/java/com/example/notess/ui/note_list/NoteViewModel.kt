@@ -15,6 +15,7 @@ import com.example.notess.domain.use_case.note.DeleteAllTrashedNotesUseCase
 import com.example.notess.domain.use_case.note.MoveToTrashUseCase
 import com.example.notess.domain.use_case.note.SaveAndArchiveNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class NoteViewModel @Inject constructor(
@@ -41,8 +43,9 @@ class NoteViewModel @Inject constructor(
     val archivedNotes: LiveData<List<Note>> = repository.archivedNotes
     val trashedNotes: LiveData<List<Note>> = repository.trashedNotes
     private val _searchQuery = MutableStateFlow<String?>(null)
+    @OptIn(FlowPreview::class)
     val notes: LiveData<List<Note>> = _searchQuery
-        .debounce(300)
+        .debounce(300.milliseconds)
         .asLiveData()
         .switchMap { query ->
             if (query.isNullOrBlank()) {

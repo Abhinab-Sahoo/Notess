@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     id ("kotlin-kapt")
     id ("androidx.navigation.safeargs.kotlin")
     id ("dagger.hilt.android.plugin")
@@ -34,6 +35,7 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        compose = true
     }
 
     compileOptions {
@@ -95,4 +97,16 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.10.3")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Compose
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.viewmodel)
+    implementation(libs.hilt.navigation.compose)
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }
