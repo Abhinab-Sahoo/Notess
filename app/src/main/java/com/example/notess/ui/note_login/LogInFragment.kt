@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -104,8 +105,8 @@ class LogInFragment : Fragment() {
                 )
 
                 val credential = result.credential
-                if (credential is CredentialManager &&
-                    credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                if (credential is CustomCredential &&
+                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
 
                     val googleIdTokenCredential = GoogleIdTokenCredential.Companion.createFrom(credential.data)
                     val idToken = googleIdTokenCredential.idToken
